@@ -29,7 +29,7 @@ public class Client implements IClient {
         out.write(authorization + "\n");
         out.flush();
         String answer = in.readLine();
-        answer = Parser.parse(authorizationTeg,answer);
+        answer = Parser.parse(authorizationTeg, answer);
         System.out.println(answer);
         if (answer.equalsIgnoreCase("ok")) {
             this.messaging();
@@ -52,15 +52,18 @@ public class Client implements IClient {
             out.write(word + "\n");
             out.flush();
 
-            new Thread(()->{
-                String serverWord = null;
-                try {
-                    serverWord = in.readLine();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            new Thread(() -> {
+                while (clientSocket.isConnected()) {
+                    String serverWord = null;
+                    try {
+                        serverWord = in.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    serverWord = Parser.parse(messageTeg, serverWord);
+                    System.out.println(serverWord);
                 }
-                serverWord = Parser.parse(messageTeg, serverWord);
-                System.out.println(serverWord);}).start();
+            }).start();
         }
     }
 }
