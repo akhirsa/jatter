@@ -17,7 +17,7 @@ public class StartClient {
                  BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                  BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             ) {
-                Client client = new Client(reader, in, out);
+                Client client = new Client(clientSocket, reader, in, out);
                 client.messaging();
             } finally {
                 System.out.println("Client was closed...");

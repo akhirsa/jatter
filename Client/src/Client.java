@@ -6,11 +6,13 @@ public class Client implements IClient {
     private static String loginTeg = "l";
     private static String messageTeg = "m";
 
+    private Socket clientSocket;
     private BufferedReader reader;
     private BufferedReader in;
     private BufferedWriter out;
 
-    public Client(BufferedReader reader, BufferedReader in, BufferedWriter out) {
+    public Client(Socket clientSocket, BufferedReader reader, BufferedReader in, BufferedWriter out) {
+        this.clientSocket = clientSocket;
         this.reader = reader;
         this.in = in;
         this.out = out;
@@ -38,7 +40,8 @@ public class Client implements IClient {
 
     @Override
     public void messaging() throws IOException {
-        while (true) {
+
+        while (clientSocket.isConnected()) {
             System.out.println("Write message");
             String word = reader.readLine();
             if (word.equalsIgnoreCase("exit")) {
@@ -49,9 +52,15 @@ public class Client implements IClient {
             out.write(word + "\n");
             out.flush();
 
-            String serverWord = in.readLine();
-            serverWord = Parser.parse(messageTeg, serverWord);
-            System.out.println(serverWord);
+            new Thread(()->{
+                String serverWord = null;
+                try {
+                    serverWord = in.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                serverWord = Parser.parse(messageTeg, serverWord);
+                System.out.println(serverWord);}).start();
         }
     }
 }
