@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.Socket;
 
 public class Client implements IClient {
+    private static boolean socketListening = true;
     private static String authorizationTeg = "a";
     private static String loginTeg = "l";
     private static String messageTeg = "m";
@@ -40,30 +41,45 @@ public class Client implements IClient {
 
     @Override
     public void messaging() throws IOException {
-
+        SocketListener socketListener = new SocketListener();
+        socketListener.setDaemon(true);
+        socketListener.start();
         while (clientSocket.isConnected()) {
             System.out.println("Write message");
             String word = reader.readLine();
             if (word.equalsIgnoreCase("exit")) {
+                //socketListening = false;
+                socketListener.interrupt();
+                //in.close();
+                //out.close();
+                //reader.close();
                 return;
             }
             word = Wrapper.wrap(messageTeg, word);
 
             out.write(word + "\n");
             out.flush();
+        }
+    }
 
-            new Thread(() -> {
-                while (clientSocket.isConnected()) {
-                    String serverWord = null;
-                    try {
-                        serverWord = in.readLine();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    serverWord = Parser.parse(messageTeg, serverWord);
+    class SocketListener extends Thread {
+        @Override
+        public void run() {
+            String serverWord = null;
+
+            while (!clientSocket.isClosed()) {
+
+                try {
+                    
+                    serverWord = in.readLine();
+                    if (serverWord != null)
+                        serverWord = Parser.parse(messageTeg, serverWord);
                     System.out.println(serverWord);
+
+                } catch (IOException e) {
+                    System.err.println(e);
                 }
-            }).start();
+            }
         }
     }
 }
