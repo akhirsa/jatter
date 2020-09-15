@@ -23,7 +23,7 @@ public class SocketListener extends Thread {
             try {
                 serverWord = in.readLine();
                 if (serverWord != null)
-                    serverWord = Parser.parse(messageTag, serverWord);
+                    serverWord = Wrapper.unwrap(messageTag, serverWord);
                 System.out.println(serverWord);
 
             } catch (IOException e) {

@@ -38,7 +38,7 @@ public class Client implements IClient {
             out.write(authorization + "\n");
             out.flush();
             String answer = in.readLine();
-            answer = Parser.parse(authorizationTag, answer);
+            answer = Wrapper.unwrap(authorizationTag, answer);
             System.out.println(answer);
             if (answer.equalsIgnoreCase("ok")) {
                 this.messaging();
