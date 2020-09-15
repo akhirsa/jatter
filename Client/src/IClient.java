@@ -1,7 +1,7 @@
 import java.io.IOException;
 
 public interface IClient {
-    void authorization() throws IOException;
+    void authorization();
 
-    void messaging() throws IOException;
+    void messaging();
 }
