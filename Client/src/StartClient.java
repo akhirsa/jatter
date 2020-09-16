@@ -7,7 +7,7 @@ public class StartClient {
         boolean debugModEnable = true;
 
         Client client = new Client(HOST, PORT, debugModEnable);
-        client.messaging();
+        client.authorization();
         System.out.println("Client was closed...");
     }
 }

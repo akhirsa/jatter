@@ -31,15 +31,12 @@ public class Client implements IClient {
         try {
             System.out.println("Enter your login");
             String authorization = reader.readLine();
-
-            System.out.println(authorization);
-            authorization = Wrapper.wrap(authorizationTag, Wrapper.wrap(loginTag, authorization));
-
+            authorization = Wrapper.wrap(authorizationTag, authorization);
             out.write(authorization + "\n");
             out.flush();
+
             String answer = in.readLine();
             answer = Wrapper.unwrap(authorizationTag, answer);
-            System.out.println(answer);
             if (answer.equalsIgnoreCase("ok")) {
                 this.messaging();
             } else {
