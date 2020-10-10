@@ -37,6 +37,17 @@ public class MessageHandler implements Runnable {
         }
     }
 
+    public void clientLeft(){
+        System.out.println("Client left\n");
+        postman.removeClient(this);
+        try{
+        in.close();
+        out.close();
+        clientSocket.close();
+        } catch (IOException e){
+            System.out.println(clientLogin + " got on balls :(\n");
+        }
+    }
     // Thread's main function
     //
 
@@ -47,8 +58,9 @@ public class MessageHandler implements Runnable {
             //
             // This loop oriented only to reading data from client and sending back simple messages
             //
-            while (clientSocket.isConnected()) {
-                String word = in.readLine();
+
+            String word;
+            while ((word = in.readLine()) != null) {
 
                 // Check: if client want to authenticate on server - it's data should match authRegex
                 // regular expression
@@ -56,11 +68,6 @@ public class MessageHandler implements Runnable {
                 if (word == null || word.isEmpty()) continue;
 
                 if (word.equalsIgnoreCase("exit")) {
-                    System.out.println("Client left\n");
-                    postman.removeClient(this);
-                    in.close();
-                    out.close();
-                    clientSocket.close();
                     break;
                 }
 
@@ -76,6 +83,7 @@ public class MessageHandler implements Runnable {
                 postman.sendMessage("<<< " + clientLogin + " >>>" + ": " + word + "\n");
                 out.flush();
             }
+            clientLeft();
         } catch (IOException e) {
             System.err.println(e);
         }
